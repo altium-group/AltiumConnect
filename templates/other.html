@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Messages</title>
+    <meta charset="utf-8">
+</head>
+<body>
+    <h1>Messages entre le 16/09/23 à 22h et le 17/09/23 à 5h</h1>
+    <ul>
+        {% for message in messages %}
+        <li>{{ message.author }} : {{ message.message }}</li>
+        {% endfor %}
+    </ul>
+</body>
+</html>

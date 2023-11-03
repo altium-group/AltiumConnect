@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Leaderboard - Instagram Message Wrap</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='box.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='icone.ico') }}"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"/>
+    <meta charset="utf-8">
+</head>
+<body>
+    <nav>
+        <div class="logo">
+            <img width="50px" height="50px" src="{{ url_for('static', filename=infos[0]) }}">
+            {{ infos[1] }}
+        </div>
+        <input type="checkbox" id="click">
+        <label for="click" class="menu-btn">
+        <i class="fas fa-bars"></i>
+        </label>
+        <ul>
+            <li><a href="http://127.0.0.1:5000/"><i class="fas fa-home"></i> Accueil</a></li>
+            <li><a href="leaderboard" class="active"><i class="fas fa-envelope"></i> Messages</a></li>
+            <li><a href="relation"><i class="fas fa-user-friends"></i> Relations</a></li>
+        </ul>
+    </nav>
+    <div class="search-bar" style="display: flex; align-items: center; margin-top: 5px;">
+        <input type="text" id="searchInput" placeholder="Rechercher..." oninput="searchTable()">
+        <div id="resultCount" style="margin-left: 5px; color: white; display: none;"></div>
+    </div>
+
+    <style>
+        .table-container {
+            overflow-y: auto; /* Ajoute un défilement vertical si nécessaire */
+        }
+        .hidden {
+        display: none;
+    }
+    </style>
+    
+    <div id="original" class="box_init" style="position: fixed; bottom: 5px; top: 115px; left: 5px; right: 5px; display: block;">
+        <div class="table-container">
+            <table id="dataTable", style="width: 100%;">
+                <thead>
+                <tr style="cursor: pointer;">
+                    <th>Rang</th>
+                    <th>Pseudo</th>
+                    <th>Messages Envoyés</th>
+                    <th>Par personne</th>
+                    <th>Messages Likés</th>
+                    <th>Vocaux Envoyés</th>
+                    <th>Vidéos Envoyés</th>
+                    <th>Photos Envoyés</th>
+                    <th>Premier Message</th>
+                    <th>Depuis</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for i, (person, stats) in msg %}
+                <tr  class="list">
+                    {% if person is defined %}
+                        {% if person.startswith("_") %}
+                            {% set pseudo = "_" + person[1:].split("_")[0] %}
+                        {% else %}
+                            {% set pseudo = person.split("_")[0] %}
+                        {% endif %}
+                    {% else %}
+                        {% set pseudo = "Utilisateur inconnu" %}
+                    {% endif %}
+                    <td style="font-family: consolas;">{{ '' if loop.index > 9 else '0' }}{{ loop.index }}</td>
+                    <td> <a href="conversation/{{ pseudo }}" style="color: inherit; text-decoration: none;">{{ pseudo|reduce }}</a></td>
+                    <td>{{ stats['total_messages']|comma }}</td>
+                    <td>{{ stats['n']|comma }} / {{ stats['o']|comma }}</td>
+                    <td>{{ stats['likes']|comma }}</td>
+                    <td>{{ stats['audios']|comma }}</td>
+                    <td>{{ stats['videos']|comma }}</td>
+                    <td>{{ stats['photos']|comma }}</td>
+                    <td>{{ stats['formated'] }}</td>
+                    <td>{{ stats['since']|comma }} jours</td>
+                </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <script type="text/javascript" src="./static/search.js"></script>
+    </body>
+</html>

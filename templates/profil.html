@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="fr" dir="ltr">
+    <head>
+        <meta charset="utf-8">
+        <title>Accueil - Instagram Message Wrap</title>
+        <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+        <link rel="stylesheet" href="{{ url_for('static', filename='forms.css') }}">
+        <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='icone.ico') }}" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    </head>
+    <body>
+        <style>
+            #footer {
+                position: absolute;
+                bottom: 0;
+                left: 0;
+                width: 100%;
+                padding: 5px 0;
+                text-align: center;
+            }
+
+            @media only screen and (min-width: 920px) {
+                #footer {
+                    position: static;
+                }
+            }
+        </style>
+        <nav>
+            <div class="logo">
+                <img width="50px" height="50px" src="./static/icone.ico">
+                {{ user[1] }}
+            </div>
+            <input type="checkbox" id="click">
+            <label for="click" class="menu-btn">
+                <i class="fas fa-bars"></i>
+            </label>
+            <ul>
+                <li><a href="http://127.0.0.1:5000/"><i class="fas fa-home"></i> Accueil</a></li>
+                <li><a><i class="fas fa-envelope"></i> Messages</a></li>
+                <li><a><i class="fas fa-user-friends"></i> Relations</a></li>
+            </ul>
+        </nav>
+        <div class="content">
+            <div class="container">
+                <input type="checkbox" id="check">
+                <div class="login form">
+                    <header>{{ user[1] }}</header>
+                    <form method="POST" action="/profile">
+                        <input type="text" value="{{ user[1] }}" id="username" name="username" placeholder="E-mail - Pseudo">
+                        <input type="password" value="{{ user[2] }}" id="password" name="password" placeholder="Mot de passe">
+                        <a href="#">Mot de passe oublié ?</a>
+                        <input type="submit" class="button" value="Modifier">
+                    </form>
+                    <div class="signup">
+                        {% if error == 1 %}
+                        <br><span class="signup" style="color: red;">Pseudo / Mot de passe incorrect</span>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>
