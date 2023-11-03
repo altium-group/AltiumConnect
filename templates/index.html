@@ -1,0 +1,45 @@
+<html lang="fr" dir="ltr">
+   <head>
+      <meta charset="utf-8">
+      <title>Acceuil - Instagram Message Wrap</title>
+      <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+      <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='icone.ico') }}"/>
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"/>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   </head>
+   <body>
+      <style>
+       #footer {
+           position: absolute;
+           bottom: 0;
+           left: 0;
+           width: 100%;
+           padding: 5px 0;
+           text-align: center;
+       }
+       @media only screen and (min-width: 920px) {
+           #footer {
+               position: static;
+           }
+       }
+      </style>
+      <nav>
+        <div class="logo">
+            <img width="50px" height="50px" src="{{ url_for('static', filename=infos[2]) }}">
+            {{ infos[0] }}
+        </div>
+        <input type="checkbox" id="click">
+        <label for="click" class="menu-btn">
+        <i class="fas fa-bars"></i>
+        </label>
+        <ul>
+            <li><a href="http://127.0.0.1:5000/" class="active"><i class="fas fa-home"></i> Accueil</a></li>
+            <li><a href="leaderboard"><i class="fas fa-envelope"></i> Messages</a></li>
+            <li><a href="relation"><i class="fas fa-user-friends"></i> Relations</a></li>
+        </ul>
+    </nav>
+      <div class="content">
+         yo
+      </div>
+   </body>
+</html>
