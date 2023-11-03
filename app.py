@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request, redirect, url_for, session
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy.orm import sessionmaker
 import os, datetime
 
 app = Flask(__name__)
@@ -22,7 +23,10 @@ def home():
     if 'user_id' not in session:
         return redirect(url_for('login'))
 
-    user = User.query.get(session['user_id'])
+    Session = sessionmaker(bind=db.engine)
+    session_db = Session()
+    user = session_db.get(User, session['user_id'])
+    session_db.close()
     return render_template('index.html', user=user)
 
 @app.route('/login', methods=['GET', 'POST'])

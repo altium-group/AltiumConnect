@@ -25,8 +25,13 @@
       </style>
       <nav>
         <div class="logo">
-            <img width="50px" height="50px" src="{{ url_for('static', filename=infos[2]) }}">
-            {{ infos[0] }}
+            {% if user.profilePic %}
+            {% set profile = user.profilePic %}
+            {% else %}
+            {% set profile = './static/icone.ico' %}
+            {% endif %}
+            <img width="50px" height="50px" src="{{ profile }}">
+            {{ user.username }}
         </div>
         <input type="checkbox" id="click">
         <label for="click" class="menu-btn">
@@ -34,12 +39,11 @@
         </label>
         <ul>
             <li><a href="http://127.0.0.1:5000/" class="active"><i class="fas fa-home"></i> Accueil</a></li>
-            <li><a href="leaderboard"><i class="fas fa-envelope"></i> Messages</a></li>
-            <li><a href="relation"><i class="fas fa-user-friends"></i> Relations</a></li>
+            <li><a href="profil"><i class="fas fa-user"></i> Profile</a></li>
         </ul>
     </nav>
       <div class="content">
-         yo
+         yo {{ user.username }}
       </div>
    </body>
 </html>
