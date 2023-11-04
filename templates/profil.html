@@ -4,36 +4,19 @@
         <meta charset="utf-8">
         <title>Accueil - Instagram Message Wrap</title>
         <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-        <link rel="stylesheet" href="{{ url_for('static', filename='forms.css') }}">
+        <link rel="stylesheet" href="{{ url_for('static', filename='profil.css') }}">
         <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='icone.ico') }}" />
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
     </head>
     <body>
-        <style>
-            #footer {
-                position: absolute;
-                bottom: 0;
-                left: 0;
-                width: 100%;
-                padding: 5px 0;
-                text-align: center;
-            }
-
-            @media only screen and (min-width: 920px) {
-                #footer {
-                    position: static;
-                }
-            }
-        </style>
         <nav>
             <div class="logo">
                 {% if user.profilePic %}
-                {% set profile = user.profilePic %}
+                <img width="50px" height="50px" src="data:image/png;base64,{{ user.profilePic | b64decode }}">
                 {% else %}
-                {% set profile = './static/icone.ico' %}
+                <img width="50px" height="50px" src="{{ url_for('static', filename='icone.ico') }}">
                 {% endif %}
-                <img width="50px" height="50px" src="{{ profile }}">
                 {{ user.username }}
             </div>
             <input type="checkbox" id="click">
@@ -43,25 +26,105 @@
             <ul>
                 <li><a href="http://127.0.0.1:5000/"><i class="fas fa-home"></i> Accueil</a></li>
                 <li><a href="profil" class="active"><i class="fas fa-user"></i> Profile</a></li>
+                {% if user.status == "admin" %}
+                <li><a href="adminpanel"><i class="fas fa-cogs"></i></i> Administration</a></li>
+                {% endif %}
+                <li><a href="logout"><i class="fas fa-sign-out-alt fa-rotate-180"></i></a></li>
             </ul>
         </nav>
         <div class="content">
             <div class="container">
-                <input type="checkbox" id="check">
-                <div class="login form">
-                    <header>{{ user.username }}</header>
-                    <form method="POST" action="/profil">
-                        <input type="text" value="{{ user.username }}" id="username" name="username" placeholder="E-mail - Pseudo">
-                        <input type="password" value="{{ user.password }}" id="password" name="password" placeholder="Mot de passe">
-                        <a href="#">Mot de passe oublié ?</a>
-                        <input type="submit" class="button" value="Modifier">
-                    </form>
-                    <div class="signup">
-                        {% if error == 1 %}
-                        <br><span class="signup" style="color: red;">Pseudo / Mot de passe incorrect</span>
-                        {% endif %}
+                <header>{{ user.username }}</header>
+                <form action="/profil" method="POST" enctype="multipart/form-data">
+                    <div class="form first">
+                        <div class="details personal">
+                            <span class="title">Informations</span>
+
+                            <div class="fields">
+                                <div class="input-field">
+                                    <label>Pseudo</label>
+                                    <input type="text" name="username" value="{% if user.username %}{{ user.username }}{% endif %}" placeholder="Ex: MartinDup90">
+                                </div>
+
+                                <div class="input-field">
+                                    <label>Date de naissance</label>
+                                    <input type="date" name="birth"  value="{% if user.birth %}{{ user.birth }}{% endif %}" placeholder="Ex: 05/12/1990">
+                                </div>
+
+                                <div class="input-field">
+                                    <label>E-mail</label>
+                                    <input type="email" name="email" value="{% if user.email %}{{ user.email }}{% endif %}" placeholder="Ex: martin.dupont@gmail.com">
+                                </div>
+
+                                <div class="input-field">
+                                    <label>Numéros de téléphone</label>
+                                    <input type="tel" name="phone" value="{% if user.phone %}{{ user.phone }}{% endif %}" placeholder="Ex: 06 00 00 00 00">
+                                </div>
+
+                                <div class="input-field">
+                                    <label>Genre</label>
+                                    <select id="genre" name="gender">
+                                        <option value="Homme" {% if genre == "Homme" %}selected{% endif %}>Homme</option>
+                                        <option value="Femme" {% if genre == "Femme" %}selected{% endif %}>Femme</option>
+                                        <option value="Autre" {% if genre == "Autre" %}selected{% endif %}>Autre</option>
+                                    </select>
+                                </div>
+
+                                <div class="input-field">
+                                    <label>Identité</label>
+                                    <input type="text" name="identity" value="{% if user.identity %}{{ user.identity }}{% endif %}" placeholder="Ex: Martin Dupont">
+                                </div>
+                            </div>
+                            <button class="nextBtn" type="button" id="nextButton">
+                                <span class="btnText">Next <i class="fas fa-arrow-right"></i></span>
+                            </button>
+                        </div> 
                     </div>
-                </div>
+
+                    <div class="form second">
+                        <div class="details address">
+                            <span class="title">Informations</span>
+
+                            <div class="fields">
+                                <div class="input-field">
+                                    <label>Photo de profile</label>
+                                    <input type="file" name="profilePic" placeholder="Fichier pdp">
+                                </div>
+
+                                <div class="input-field">
+                                    <label>Langue</label>
+                                    <input type="text" name="language" value="{% if user.language %}{{ user.language }}{% endif %}" placeholder="Ex: Français">
+                                </div>
+
+                                <div class="input-field">
+                                    <label>Nationalité</label>
+                                    <input type="text" name="nationality" value="{% if user.nationality %}{{ user.nationality }}{% endif %}" placeholder="Ex: Français">
+                                </div>
+
+                                <div class="input-field">
+                                    <label>Mot de passe</label>
+                                    <input type="password" name="password" placeholder="Ex: MartDup~~889" required>
+                                </div>
+                            </div>
+                            <div class="buttons">
+                                <button class="backBtn" type="button" id="backButton">
+                                    <span class="btnText"><i class="fas fa-arrow-right fa-rotate-180"></i> Back</span>
+                                </button>
+                                
+                                <button class="sumbit">
+                                    <span class="btnText">Submit <i class="fas fa-paper-plane"></i></span>
+                                </button>
+                                {% if code == 5 %}
+                                <br><span class="signup" style="color: green;">Modifications enregistrées avec succès</span>
+                                {% elif code == 6 %}
+                                <br><span class="signup" style="color: red;">Mot de passe incorrect</span>
+                                {% endif %}
+                            </div>
+                        </div> 
+                    </div>
+                </form>
+            </div>
+            <script src="{{ url_for('static', filename='profil.js') }}"></script>
             </div>
         </div>
     </body>

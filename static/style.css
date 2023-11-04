@@ -1,4 +1,6 @@
 *{
+  margin: 0;
+  padding: 0;
   box-sizing: border-box;
   font-family: 'Poppins', sans-serif;
 }
@@ -165,79 +167,20 @@ a.link:visited {
     word-break: break-word;
     cursor: pointer;
 }
-footer {
-  position: absolute;
-  margin-top: 15px;
-  left: 45%;
-  transform: translate(-50%, -50%);
-  color: #e9eaeb;
-  font-family: "gg sans","Noto Sans","Helvetica Neue",Helvetica,Arial,sans-serif;;
+.panel header {
+  text-transform: uppercase;
+  text-align: center;
+  font-weight: bold;
+  letter-spacing: 0.5px;
 }
-.discord {
-  color: #989a89;
+.content {
+  display: flex;
 }
-#cookie-consent-popup {
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
-  border-radius: 10px;
-  background-color: #1e1f22;
-  color: white;
-  border-radius: 5px;
-  border: 1px solid #1e1f22;
-  padding: 10px;
-  display: none;
+.panel {
+  background: #1e1f22;
+  flex: 1;
+  margin: 25px;
+  height: 350px;
+  width: 300px;
+  padding-top: 10px;
 }
-#cookie-consent-button {
-  cursor: pointer;
-  color: #989a89;
-  text-decoration: none;
-  font-size: 18px;
-  font-weight: 500;
-  padding: 8px 15px;
-  border-radius: 5px;
-  letter-spacing: 1px;
-  transition: all 0.3s ease;
-}
-#cookie-consent-button:hover {
-  color: white;
-  font-family: "gg sans","Noto Sans","Helvetica Neue",Helvetica,Arial,sans-serif;;
-  background: #36373d;
-}
-#cookie-no-consent-button {
-  cursor: pointer;
-  color: #989a89;
-  text-decoration: none;
-  font-size: 18px;
-  font-weight: 500;
-  padding: 8px 15px;
-  border-radius: 5px;
-  letter-spacing: 1px;
-  transition: all 0.3s ease;
-}
-#cookie-no-consent-button:hover {
-  color: white;
-  font-family: "gg sans","Noto Sans","Helvetica Neue",Helvetica,Arial,sans-serif;;
-  background: #36373d;
-}
-/*input {
-/*  padding: 8px;
-  background-color: #36393F;
-  color: #FFFFFF;
-  border: 1px solid #1e1f22;
-  border-radius: 5px;
-  font-family: 'Helvetica Neue', sans-serif;
-/*  font-size: 14px;
-}
-
-input:focus {
-  outline: none;
-  border: 1px solid #7289DA;
-  border-radius: 5px;
-  border-color: #7289DA;
-  box-shadow: 0 0 0 2px rgba(114, 137, 218, 0.2);
-}
-
-::placeholder {
-  color: #72767d;
-}*/
