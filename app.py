@@ -3,6 +3,7 @@ from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import LargeBinary
 from sqlalchemy.orm import sessionmaker
 import os, datetime, base64
+from flask_migrate import Migrate
 
 app = Flask(__name__)
 
@@ -13,9 +14,9 @@ def base64decode(value):
 app.jinja_env.filters['b64decode'] = base64.b64decode
 
 app.secret_key = 'defcb16b51fb5722a887a9a904855a57d7eeb584afcaf012'
-db_path = os.path.join(os.path.dirname(__file__), 'altium.db')
-app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{db_path}'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///C:\\Users\\noanh\\OneDrive\\Documents\\AltiumConnect\\altium.db'
 db = SQLAlchemy(app)
+migrate = Migrate(app, db)
 
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -30,7 +31,11 @@ class User(db.Model):
     language = db.Column(db.String(120), unique=False, nullable=True)
     nationality = db.Column(db.String(120), unique=False, nullable=True)
     status = db.Column(db.String(120), unique=False, nullable=True)
+    lastConnexion = db.Column(db.String(120), unique=False, nullable=True)
     creationDate = db.Column(db.String(120), unique=False, nullable=False)
+
+with app.app_context():
+    db.create_all()
 
 @app.route('/')
 def home():
@@ -51,6 +56,9 @@ def login():
         user = User.query.filter_by(username=username, password=password).first()
         if user:
             session['user_id'] = user.id
+            user.lastConnexion = datetime.datetime.now().timestamp()
+            db.session.commit()
+            db.session.close()
             return redirect(url_for('home'))
         else:
             return render_template('login.html', code=1)
@@ -66,7 +74,7 @@ def register():
         if password == confirmpassword:
             userr = User.query.filter_by(username=username).first()
             if not userr:
-                user = User(username=username, password=password, creationDate=datetime.datetime.now().timestamp())
+                user = User(username=username, password=password, lastConnexion=datetime.datetime.now().timestamp(), creationDate=datetime.datetime.now().timestamp())
                 db.session.add(user)
                 db.session.commit()
                 return redirect(url_for('login'))
@@ -121,12 +129,24 @@ def adminpanel():
     else:
         return redirect(url_for('home'))
 
+@app.route('/adminpanel/userlist')
+def userlist():
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+    
+    Session = sessionmaker(bind=db.engine)
+    session_db = Session()
+    user = session_db.get(User, session['user_id'])
+    session_db.close()
+    if user.status == "admin":
+        return render_template('adminpanel.html', user=user)
+    else:
+        return redirect(url_for('home'))
+
 @app.route('/logout')
 def logout():
     session.pop('user_id', None)
     return redirect(url_for('login'))
 
 if __name__ == '__main__':
-    with app.app_context():
-        db.create_all()
     app.run(debug=True)
