@@ -26,21 +26,6 @@
                 }
             }
         </style>
-        <nav>
-            <div class="logo">
-                <img width="50px" height="50px" src="./static/icone.ico">
-                Se connecter
-            </div>
-            <input type="checkbox" id="click">
-            <label for="click" class="menu-btn">
-                <i class="fas fa-bars"></i>
-            </label>
-            <ul>
-                <li><a href="http://127.0.0.1:5000/"><i class="fas fa-home"></i> Accueil</a></li>
-                <li><a><i class="fas fa-envelope"></i> Messages</a></li>
-                <li><a><i class="fas fa-user-friends"></i> Relations</a></li>
-            </ul>
-        </nav>
         <div class="content">
             <div class="container">
                 <input type="checkbox" id="check">
@@ -53,9 +38,11 @@
                         <input type="submit" class="button" value="Se connecter">
                     </form>
                     <div class="signup">
-                        <span class="signup">Pas de compte ?<a href="./register"> S'inscrire</a></span>
-                        {% if error == 1 %}
+                        <span class="signup">Pas de compte ? <a href="./register">S'inscrire</a></span>
+                        {% if code == 1 %}
                         <br><span class="signup" style="color: red;">Pseudo / Mot de passe incorrect</span>
+                        {% elif code == 4 %}
+                        <br><span class="signup" style="color: green;">Compte crée avec succès</span>
                         {% endif %}
                     </div>
                 </div>
