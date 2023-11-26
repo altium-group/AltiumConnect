@@ -2,8 +2,11 @@ from flask import Flask, render_template, request, redirect, url_for, session
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import LargeBinary
 from sqlalchemy.orm import sessionmaker
-import os, datetime, base64
+import os, datetime, base64, hashlib
 from flask_migrate import Migrate
+from PIL import Image
+from io import BytesIO
+from sqlalchemy import create_engine
 
 app = Flask(__name__)
 
@@ -37,33 +40,39 @@ class User(db.Model):
 with app.app_context():
     db.create_all()
 
-@app.route('/')
-def home():
-    if 'user_id' not in session:
-        return redirect(url_for('login'))
-
-    Session = sessionmaker(bind=db.engine)
-    session_db = Session()
-    user = session_db.get(User, session['user_id'])
-    session_db.close()
-    return render_template('index.html', user=user)
+def hash_string(input_string):
+    sha256 = hashlib.sha256()
+    input_bytes = input_string.encode('utf-8')
+    sha256.update(input_bytes)
+    hashed_string = sha256.hexdigest()
+    return hashed_string
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
-        user = User.query.filter_by(username=username, password=password).first()
+        user = User.query.filter_by(username=username, password=hash_string(password)).first()
         if user:
             session['user_id'] = user.id
-            user.lastConnexion = datetime.datetime.now().timestamp()
+            user.lastConnexion = datetime.datetime.now().strftime('%d/%m/%Y %H:%M:%S')
             db.session.commit()
-            db.session.close()
             return redirect(url_for('home'))
         else:
             return render_template('login.html', code=1)
     
     return render_template('login.html')
+
+@app.route('/')
+def home():
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+
+    Session2 = sessionmaker(bind=db.engine)
+    session_db = Session2()
+    user = session_db.get(User, session['user_id'])
+    session_db.close()
+    return render_template('index.html', user=user)
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
@@ -74,7 +83,7 @@ def register():
         if password == confirmpassword:
             userr = User.query.filter_by(username=username).first()
             if not userr:
-                user = User(username=username, password=password, lastConnexion=datetime.datetime.now().timestamp(), creationDate=datetime.datetime.now().timestamp())
+                user = User(username=username, password=hash_string(password), status="user", lastConnexion=datetime.datetime.now().strftime('%d/%m/%Y %H:%M:%S'), creationDate=datetime.datetime.now().timestamp())
                 db.session.add(user)
                 db.session.commit()
                 return redirect(url_for('login'))
@@ -90,18 +99,13 @@ def profil():
     if 'user_id' not in session:
         return redirect(url_for('login'))
     
-    Session = sessionmaker(bind=db.engine)
-    session_db = Session()
+    Session2 = sessionmaker(bind=db.engine)
+    session_db = Session2()
     user = session_db.get(User, session['user_id'])
 
     if request.method == 'POST':
         password = request.form['password']
         if password == user.password:
-            if 'profilePic' in request.files:
-                profile_pic = request.files['profilePic']
-                if profile_pic:
-                    image_data = profile_pic.read()
-                    user.profilePic = base64.b64encode(image_data)
             for key in request.form:  
                 values = request.form.getlist(key)
                 if key == "password":
@@ -111,7 +115,7 @@ def profil():
             session_db.close()
             return redirect(url_for('profil'))
         else:
-            return render_template('profil.html', code=6)
+            return render_template('profil.html', code=6, user=user)
     else:
         return render_template('profil.html', user=user)
 
@@ -120,8 +124,8 @@ def adminpanel():
     if 'user_id' not in session:
         return redirect(url_for('login'))
     
-    Session = sessionmaker(bind=db.engine)
-    session_db = Session()
+    Session2 = sessionmaker(bind=db.engine)
+    session_db = Session2()
     user = session_db.get(User, session['user_id'])
     session_db.close()
     if user.status == "admin":
@@ -134,12 +138,21 @@ def userlist():
     if 'user_id' not in session:
         return redirect(url_for('login'))
     
-    Session = sessionmaker(bind=db.engine)
-    session_db = Session()
+    Session2 = sessionmaker(bind=db.engine)
+    session_db = Session2()
     user = session_db.get(User, session['user_id'])
     session_db.close()
+    
     if user.status == "admin":
-        return render_template('adminpanel.html', user=user)
+        engine = create_engine('sqlite:///C:\\Users\\noanh\\OneDrive\\Documents\\AltiumConnect\\altium.db')
+        Session2 = sessionmaker(bind=engine)
+        sqlalchemy_session = Session2()
+
+        results = sqlalchemy_session.query(User).all()
+
+        sqlalchemy_session.close()
+
+        return render_template('userlist.html', user=user, userlist=results)
     else:
         return redirect(url_for('home'))
 
