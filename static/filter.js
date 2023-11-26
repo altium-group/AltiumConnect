@@ -6,7 +6,7 @@ function filterTable() {
     let tr = table.getElementsByTagName("tr");
 
     for (let i = 0; i < tr.length; i++) {
-        let td = tr[i].getElementsByTagName("td")[2];
+        let td = tr[i].getElementsByTagName("td")[4];
         if (td) {
             let cellText = td.textContent.toLowerCase();
             if (selectedValue === "all" || cellText.includes(selectedValue)) {
