@@ -11,17 +11,24 @@
 <body>
     <nav>
         <div class="logo">
-            <img width="50px" height="50px" src="{{ url_for('static', filename=infos[0]) }}">
-            {{ infos[1] }}
+            {% if user.profilePic %}
+            <img width="50px" height="50px" src="data:image/png;base64,{{ user.profilePic | b64decode }}">
+            {% else %}
+            <img width="50px" height="50px" src="{{ url_for('static', filename='icone.ico') }}">
+            {% endif %}
+            {{ user.username }}
         </div>
         <input type="checkbox" id="click">
         <label for="click" class="menu-btn">
         <i class="fas fa-bars"></i>
         </label>
         <ul>
-            <li><a href="http://127.0.0.1:5000/"><i class="fas fa-home"></i> Accueil</a></li>
-            <li><a href="leaderboard"><i class="fas fa-envelope"></i> Messages</a></li>
-            <li><a href="relation" class="active"><i class="fas fa-user-friends"></i> Relations</a></li>
+            <li><a href="http://127.0.0.1:5000/" class="active"><i class="fas fa-home"></i> Accueil</a></li>
+            <li><a href="../profil"><i class="fas fa-user"></i> Profile</a></li>
+            {% if user.status == "admin" %}
+            <li><a href="../adminpanel"><i class="fas fa-cogs"></i></i> Administration</a></li>
+            {% endif %}
+            <li><a href="../logout"><i class="fas fa-sign-out-alt fa-rotate-180"></i></a></li>
         </ul>
     </nav>
 
@@ -29,18 +36,15 @@
         <input type="text" id="searchInput" placeholder="Rechercher..." oninput="searchTable()">
         <select id="filterDropdown" onchange="filterTable()" style="margin-left: 5px;">
             <option value="all">Tous</option>
-            <option value="Bloqué">Bloqué</option>
-            <option value="Ami Proche">Ami Proche</option>
-            <option value="Abonné">Abonné</option>
-            <option value="Abonnement">Abonnement</option>
-            <option value="Mutuels">Mutuels</option>
+            <option value="admin">Admins</option>
+            <option value="user">Users</option>
         </select>
         <div id="resultCount" style="margin-left: 5px; color: white; display: none;"></div>
     </div>
 
     <style>
         .table-container {
-            overflow-y: auto; /* Ajoute un défilement vertical si nécessaire */
+            overflow-y: auto;
         }
         .hidden {
             display: none;
@@ -52,19 +56,25 @@
             <table id="dataTable" style="width: 100%;">
                 <thead>
                     <tr style="cursor: pointer;">
-                        <th>Rang</th>
+                        <th>#</th>
                         <th>Pseudo</th>
-                        <th>Etat</th>
+                        <th>E-mail</th>
+                        <th>Genre</th>
+                        <th>Status</th>
                         <th>Depuis</th>
+                        <th>Dernière Connexion</th>
                     </tr>
                 </thead>
                 <tbody>
-                    {% for i, (person, stats) in relations %}
+                    {% for entry in userlist %}
                     <tr class="list">
-                        <td style="font-family: consolas;">{{ '' if loop.index > 9 else '0' }}{{ loop.index }}</td>
-                        <td>{{ person }}</td>
-                        <td>{{ stats['type'] }}</td>
-                        <td>{{ stats['since']|comma }} jours</td>
+                        <td style="font-family: consolas;">{{ entry.id }}</td>
+                        <td>{{ entry.username }}</td>
+                        <td>{{ entry.email }}</td>
+                        <td>{{ entry.gender }}</td>
+                        <td>{{ entry.status }}</td>
+                        <td>{{ entry.creationDate }}</td>
+                        <td>{{ entry.lastConnexion }}</td>
                     </tr>
                     {% endfor %}
                 </tbody>
